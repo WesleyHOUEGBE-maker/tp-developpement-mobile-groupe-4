@@ -30,6 +30,31 @@ class VilleViewModel extends ChangeNotifier {
       Ville(nom: 'Nattitingou', pays: 'Bénin', temperature: 24.0, condition: 'Orageux', humidite: 90), // Test Orageux
       
   Ville(nom: 'Tanguiéta', pays: 'Bénin', temperature: 26.0, condition: 'Ventueux', humidite: 65), // Test Ventueux
+  
+  
+  // ajout personnel de villeSelectionnee
+  
+  Ville(nom: 'Lomé', pays: 'Togo', temperature: 31.0, condition: 'Ensoleillé', humidite: 78),
+Ville(nom: 'Kara', pays: 'Togo', temperature: 29.0, condition: 'Nuageux', humidite: 65),
+Ville(nom: 'Lagos', pays: 'Nigéria', temperature: 30.0, condition: 'Pluvieux', humidite: 85),
+Ville(nom: 'Abuja', pays: 'Nigéria', temperature: 33.0, condition: 'Ensoleillé', humidite: 40),
+Ville(nom: 'Dakar', pays: 'Sénégal', temperature: 26.0, condition: 'Ventueux', humidite: 75),
+Ville(nom: 'Saint-Louis', pays: 'Sénégal', temperature: 25.0, condition: 'Ventueux', humidite: 70),
+Ville(nom: 'Abidjan', pays: 'Côte d\'Ivoire', temperature: 28.0, condition: 'Pluvieux', humidite: 82),
+Ville(nom: 'Yamoussoukro', pays: 'Côte d\'Ivoire', temperature: 32.0, condition: 'Orageux', humidite: 60),
+Ville(nom: 'Ouagadougou', pays: 'Burkina Faso', temperature: 35.0, condition: 'Ensoleillé', humidite: 30),
+Ville(nom: 'Bobo-Dioulasso', pays: 'Burkina Faso', temperature: 31.0, condition: 'Nuageux', humidite: 55),
+Ville(nom: 'Paris', pays: 'France', temperature: 18.0, condition: 'Nuageux', humidite: 80),
+Ville(nom: 'Marseille', pays: 'France', temperature: 24.0, condition: 'Ensoleillé', humidite: 50),
+Ville(nom: 'Montréal', pays: 'Canada', temperature: 15.0, condition: 'Pluvieux', humidite: 88),
+Ville(nom: 'Vancouver', pays: 'Canada', temperature: 14.0, condition: 'Nuageux', humidite: 90),
+Ville(nom: 'Rio de Janeiro', pays: 'Brésil', temperature: 27.0, condition: 'Ensoleillé', humidite: 73),
+Ville(nom: 'São Paulo', pays: 'Brésil', temperature: 22.0, condition: 'Orageux', humidite: 80),
+Ville(nom: 'Tokyo', pays: 'Japon', temperature: 21.0, condition: 'Nuageux', humidite: 65),
+Ville(nom: 'Kyoto', pays: 'Japon', temperature: 20.0, condition: 'Pluvieux', humidite: 70),
+Ville(nom: 'Marrakech', pays: 'Maroc', temperature: 34.0, condition: 'Ensoleillé', humidite: 25),
+Ville(nom: 'Casablanca', pays: 'Maroc', temperature: 23.0, condition: 'Ventueux', humidite: 70),
+
     ];
 
     // Par défaut, la première ville de la liste (Cotonou) est sélectionnée
