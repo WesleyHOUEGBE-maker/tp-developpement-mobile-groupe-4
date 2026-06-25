@@ -30,7 +30,7 @@ Il consiste à construire une application Flutter AppMeteo avec une architecture
 
 ## Instructions pour lancer le projet
 1. Installer Flutter (https://flutter.dev)
-2. Cloner le dépôt : `git clone https://github.com/WesleyHOUEGBE-maker/app_meteo.git`
+2. Cloner le dépôt : `git clone https://github.com/WesleyHOUEGBE-maker/tp-developpement-mobile-groupe-4.git`
 3. Installer les dépendances : `flutter pub get`
 4. Lancer l'application : `flutter run`
    
