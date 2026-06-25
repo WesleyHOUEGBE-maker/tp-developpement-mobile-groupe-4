@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/ville_viewmodel.dart';
 import '../models/ville.dart';
+import 'ecran_ajout_ville.dart';
+
 
 class EcranListeVilles extends StatelessWidget {
   const EcranListeVilles({super.key});
@@ -16,6 +18,23 @@ class EcranListeVilles extends StatelessWidget {
         title: const Text('Choisir une ville'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
+        
+        
+        // --- EXERCICE C : BOUTON PLUS POUR LE FORMULAIRE ---
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => EcranAjoutVille(),
+                ),
+              );
+            },
+          ),
+        ],
+        
       ),
       body: ListView.builder(
         itemCount: vm.villes.length, // Nombre total de villes dans la liste

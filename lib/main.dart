@@ -8,9 +8,14 @@ void main() {
     // ChangeNotifierProvider injecte l'instance unique de VilleViewModel au sommet de l'arbre
     ChangeNotifierProvider(
       create: (_) => VilleViewModel(), // Initialisation de notre gestionnaire d'état
-      child: const MaterialApp(
+      child:  MaterialApp(
         title: 'AppMeteo',
         debugShowCheckedModeBanner: false, // Désactive la bannière de debug "SLOW MODE"
+        
+        theme: ThemeData(
+    
+    fontFamily: 'Mayan', 
+  ),
         home: EcranAccueil(), // Définit l'écran d'accueil comme premier écran
       ),
     ),

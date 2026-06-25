@@ -26,6 +26,10 @@ class VilleViewModel extends ChangeNotifier {
       Ville(nom: 'Parakou', pays: 'Benin', temperature: 32, condition: 'Ensoleille', humidite: 60),
       Ville(nom: 'Lagos', pays: 'Nigeria', temperature: 31, condition: 'Nuageux', humidite: 80),
       Ville(nom: 'Abidjan', pays: 'CI', temperature: 27, condition: 'Pluvieux', humidite: 85),
+      
+      Ville(nom: 'Nattitingou', pays: 'Bénin', temperature: 24.0, condition: 'Orageux', humidite: 90), // Test Orageux
+      
+  Ville(nom: 'Tanguiéta', pays: 'Bénin', temperature: 26.0, condition: 'Ventueux', humidite: 65), // Test Ventueux
     ];
 
     // Par défaut, la première ville de la liste (Cotonou) est sélectionnée
@@ -42,4 +46,14 @@ class VilleViewModel extends ChangeNotifier {
     // Notification indispensable après chaque modification de données
     notifyListeners();
   }
+  
+  
+  
+    // --- EXERCICE C : AJOUTER UNE VILLE MANUELLEMENT ---
+  void ajouterVille(Ville ville) {
+    _villes.add(ville);
+    notifyListeners(); // Informe l'application pour reconstruire la liste immédiatement
+  }
+
+
 }
