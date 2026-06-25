@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/ville_viewmodel.dart';
+import 'ecran_liste_villes.dart';
 
 class EcranAccueil extends StatelessWidget {
   const EcranAccueil({super.key});
@@ -80,6 +81,17 @@ class EcranAccueil extends StatelessWidget {
                     label: const Text('Changer de ville'),
                     onPressed: () {
                       // TODO Étape 7 : Implémenter la navigation vers la liste des villes
+                      
+                      
+
+             Navigator.push(
+                     context,
+                    MaterialPageRoute(
+                 builder: (_) => EcranListeVilles(),
+                  ),
+                 );
+
+
                     },
                   ),
                 ],
