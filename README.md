@@ -13,6 +13,7 @@ Application meteo AppMeteo - TP UE2
 | 4 | FIOGBE Stéphane | Développeur |
 | 5 | HOVO Sabin | Développeur |
 | 6 | TOSSOUVI Stephen | Développeur |
+| 7 | SOTON Emmanuel | Développeur |
 
 ## Enseignant
 TOGNON Jean-Paul  
