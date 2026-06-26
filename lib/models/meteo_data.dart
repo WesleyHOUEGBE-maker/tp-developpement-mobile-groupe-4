@@ -18,9 +18,9 @@ class MeteoData {
   });
 
   // La factory reçoit le JSON complet de l'API (pour lire 'current' ET 'daily')
-  factory MeteoData.fromJson(Map<String, dynamic> json) {
+    factory MeteoData.fromJson(Map<String, dynamic> json) {
     // 1. Extraction des données actuelles ('current')
-    final currentJson = json['current'] as Map<String, dynamic>;
+    final currentJson = json['current'] ?? json['current_weather'] as Map<String, dynamic>;
     
     // 2. Extraction des données de prévisions ('daily')
     final List<PrevisionJour> listePrevisions = [];
@@ -32,8 +32,8 @@ class MeteoData {
       final listMax = dailyJson['temperature_2m_max'] as List<dynamic>;
       final listMin = dailyJson['temperature_2m_min'] as List<dynamic>;
       
-      // Sécurité sur le nom de la clé weathercode
-      final listCodes = dailyJson['weather_code'] ?? dailyJson['weathercode'] as List<dynamic>;
+      // SÉCURITÉ CORRIGÉE : On met des parenthèses pour que le cast s'applique bien sur le résultat du ??
+      final listCodes = (dailyJson['weather_code'] ?? dailyJson['weathercode']) as List<dynamic>;
 
       // On extrait uniquement les 3 premiers jours requis par l'Exercice B
       for (int i = 0; i < 3 && i < listDates.length; i++) {
@@ -45,6 +45,18 @@ class MeteoData {
         ));
       }
     }
+
+    // 3. Retour de l'objet complet fusionné
+    return MeteoData(
+      temperature: ((currentJson['temperature_2m'] ?? currentJson['temperature']) as num).toDouble(),
+      humidite: (currentJson['relative_humidity_2m'] as num).toInt(),
+      // SÉCURITÉ AJOUTÉE : Parenthèses ici aussi pour le code météo actuel
+      weatherCode: ((currentJson['weather_code'] ?? currentJson['weathercode']) as num).toInt(),
+      dateHeureRaw: currentJson['time'] as String, // <- AJOUT EXERCICE A
+      previsions: listePrevisions,                // <- AJOUT EXERCICE B
+    );
+  
+
 
     // 3. Retour de l'objet complet fusionné
     return MeteoData(

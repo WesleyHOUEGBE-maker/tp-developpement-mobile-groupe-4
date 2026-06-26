@@ -83,10 +83,11 @@ class MeteoService {
         queryParameters: {
           'latitude': coords[0],
           'longitude': coords[1],
-          'current': 'time,temperature_2m,relative_humidity_2m,weathercode',
+          'current_weather': true, // <-- REQUIS pour activer les données actuelles
+          'current': 'temperature_2m,relative_humidity_2m,weather_code',
           
           // --- EXERCICE B : Demande des prévisions journalières spécifiques ---
-          'daily': 'temperature_2m_max,temperature_2m_min,weathercode',
+          'daily': 'temperature_2m_max,temperature_2m_min,weather_code', // Note: Open-Meteo utilise weather_code au lieu de weathercode
           
           'timezone': 'Africa/Lagos',
         });
@@ -94,7 +95,7 @@ class MeteoService {
       // CORRECTION EXERCICE B : On passe tout l'objet JSON car fromJson doit lire 'current' ET 'daily'
       return MeteoData.fromJson(response.data as Map<String, dynamic>);
 
-    } on DioException catch (e) {
+    }  on DioException catch (e) {
       print('Erreur reseau : ${e.message}');
       return null;
     }
