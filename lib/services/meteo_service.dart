@@ -2,12 +2,56 @@ import 'package:dio/dio.dart';
 import '../models/meteo_data.dart';
 
 class MeteoService {
-  // Coordonnees GPS des villes
+  // Coordonnees GPS des villes (Mises à jour avec tes ajouts personnels)
   static const Map<String, List<double>> _coords = {
+    // Villes de base du TP
     'Cotonou': [6.3703, 2.3912],
     'Parakou': [9.3370, 2.6283],
     'Lagos': [6.4541, 3.3947],
     'Abidjan': [5.3600, -4.0083],
+    
+    // Tes ajouts au Bénin
+    'Nattitingou': [10.3042, 1.3796],
+    'Tanguiéta': [10.6212, 1.2647],
+    
+    // Togo
+    'Lomé': [6.1375, 1.2123],
+    'Kara': [9.5511, 1.1861],
+    
+    // Nigéria (Variante accentuée si tapée ainsi)
+    'Nigéria': [9.0820, 8.6753], 
+    'Abuja': [9.0579, 7.4951],
+    
+    // Sénégal
+    'Dakar': [14.7167, -17.4677],
+    'Saint-Louis': [16.0179, -16.4896],
+    
+    // Côte d'Ivoire
+    'Yamoussoukro': [6.8276, -5.2753],
+    
+    // Burkina Faso
+    'Ouagadougou': [12.3714, -1.5197],
+    'Bobo-Dioulasso': [11.1772, -4.2974],
+    
+    // France
+    'Paris': [48.8566, 2.3522],
+    'Marseille': [43.2965, 5.3698],
+    
+    // Canada
+    'Montréal': [45.5017, -73.5673],
+    'Vancouver': [49.2827, -123.1207],
+    
+    // Brésil
+    'Rio de Janeiro': [-22.9068, -43.1729],
+    'São Paulo': [-23.5505, -46.6333],
+    
+    // Japon
+    'Tokyo': [35.6762, 139.6503],
+    'Kyoto': [35.0116, 135.7681],
+    
+    // Maroc
+    'Marrakech': [31.6295, -7.9811],
+    'Casablanca': [33.5731, -7.5898],
   };
 
   // Instance de dio configuree
@@ -34,22 +78,26 @@ class MeteoService {
       return null;
     }
 
-    try {
+        try {
       final response = await _dio.get('/forecast',
         queryParameters: {
           'latitude': coords[0],
           'longitude': coords[1],
-          'current': 'temperature_2m,relative_humidity_2m,weathercode',
+          'current': 'time,temperature_2m,relative_humidity_2m,weathercode',
+          
+          // --- EXERCICE B : Demande des prévisions journalières spécifiques ---
+          'daily': 'temperature_2m_max,temperature_2m_min,weathercode',
+          
           'timezone': 'Africa/Lagos',
         });
 
-      // Extraire la section "current" de la reponse
-      final current = response.data['current'] as Map<String, dynamic>;
-      return MeteoData.fromJson(current);
+      // CORRECTION EXERCICE B : On passe tout l'objet JSON car fromJson doit lire 'current' ET 'daily'
+      return MeteoData.fromJson(response.data as Map<String, dynamic>);
 
     } on DioException catch (e) {
       print('Erreur reseau : ${e.message}');
       return null;
     }
+
   }
 }

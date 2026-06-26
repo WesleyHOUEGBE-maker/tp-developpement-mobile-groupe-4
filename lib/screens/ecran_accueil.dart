@@ -6,47 +6,57 @@ import 'ecran_liste_villes.dart';
 class EcranAccueil extends StatelessWidget {
   const EcranAccueil({super.key});
 
-  // Méthode utilitaire privée pour associer une icône à chaque condition météo
+  // Méthode pour associer une icône à chaque condition météo réelle
   IconData _iconeMeteo(String condition) {
     switch (condition) {
+      case 'Ensoleille': 
       case 'Ensoleillé': 
-        return Icons.wb_sunny; // Icône de soleil
+        return Icons.wb_sunny;
       case 'Nuageux':
-        return Icons.cloud;    // Icône de nuage
+        return Icons.cloud;
       case 'Pluvieux':
-        return Icons.umbrella; // Icône de parapluie
+      case 'Averses':
+        return Icons.umbrella;
       case 'Orageux':
-        return Icons.thunderstorm; // Exercice A
+        return Icons.thunderstorm;
       case 'Ventueux': 
-        return Icons.air; // Exercice A
+        return Icons.air;
       default:
-        return Icons.wb_cloudy; // Icône par défaut si inconnue
+        return Icons.wb_cloudy;
     }
   }
 
-  // --- EXERCICE B : AJOUT DE LA MÉTHODE POUR LA COULEUR DE FOND DYNAMIQUE ---
-  // Associe une couleur claire spécifique à chaque type de condition météo
+  // Méthode pour la couleur de fond dynamique basée sur l'API
   Color _couleurFondMeteo(String condition) {
     switch (condition) {
+      case 'Ensoleille':
       case 'Ensoleillé':
-      
-        return Colors.orange.shade100; // Fond orange clair
+        return Colors.orange.shade100;
       case 'Nuageux':
-        return Colors.grey.shade300;   // Fond gris clair
+        return Colors.grey.shade300;
       case 'Pluvieux':
+      case 'Averses':
       case 'Orageux':
-        return Colors.blue.shade100;   // Fond bleu clair
+        return Colors.blue.shade100;
       default:
-        return Colors.white;           // Fond blanc par défaut
+        return Colors.white;
     }
   }
-  // ------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
-    // Écoute active du ViewModel : l'UI se reconstruit automatiquement à chaque modification
     final vm = context.watch<VilleViewModel>();
     final ville = vm.villeSelectionnee;
+
+    // Si aucune ville n'est sélectionnée au départ
+    if (ville == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // Récupération de la météo actuelle chargée
+    final meteo = vm.meteoActuelle;
 
     return Scaffold(
       appBar: AppBar(
@@ -54,102 +64,145 @@ class EcranAccueil extends StatelessWidget {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
       ),
-      // Si aucune ville n'est encore chargée, afficher un indicateur de chargement circulaire
-      body: ville == null
-          ? const Center(child: CircularProgressIndicator())
-          : Container(
-              // --- EXERCICE B : APPLICATION DU CONTAINER DE COULEUR ---
-              // On prend tout l'espace disponible sur l'écran
-              width: double.infinity,
-              height: double.infinity,
-              // Utilisation d'une BoxDecoration pour appliquer la couleur de fond dynamique
-              decoration: BoxDecoration(
-                color: _couleurFondMeteo(ville.condition),
-              ),
-              // ---------------------------------------------------------
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Section 1 : Affichage de l'icône météo correspondante
-                    Icon(
-                      _iconeMeteo(ville.condition),
-                      size: 100,
-                      color: Colors.orange,
-                    ),
-                    const SizedBox(height: 16),
-                    
-                    // Section 2 : Affichage de la température sans décimales
-
-           Consumer<VilleViewModel>(
-                builder: (context, vm, _) {
-                if (vm.chargement) {
-                 return CircularProgressIndicator();
-          }
-           if (vm.erreur != null) {
-      return Column(children: [
-        Icon(Icons.wifi_off, size: 60, color: Colors.red),
-        Text(vm.erreur!, style: TextStyle(color: Colors.red)),
-        ElevatedButton(
-          onPressed: () => vm.selectionnerVille(vm.
-              villeSelectionnee!),
-          child: Text('Réessayer'),
+      // Le Container prend la couleur dynamique si la météo est disponible
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          color: _couleurFondMeteo(meteo?.conditionTexte ?? 'Inconnu'),
         ),
-      ]);
-    }
-    final meteo = vm.meteoActuelle;
-    if (meteo == null) return Text('Chargement...');
-
-    return Column(children: [
-      Text(
-        '${meteo.temperature.toStringAsFixed(1)} °C',
-        style: TextStyle(fontSize: 60, fontWeight: FontWeight.
-            bold),
-      ),
-      Text('${meteo.conditionTexte} - ${meteo.humidite}% '
-          'humidité'),
-    ]);
-  },
-),
-
-                     
-      // Section 3 : Affichage du nom de la ville
-             Text(
-                      ville.nom,
-                      style: TextStyle(
-                        fontSize: 28, 
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    
-                    // Section 4 : Affichage de la condition textuelle et du taux d'humidité
-                    Text(
-                      '${ville.condition} - Humidite : ${ville.humidite}%',
-                      style: const TextStyle(
-                        fontSize: 16, 
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    
-                    // Section 5 : Bouton interactif pour ouvrir le sélecteur de villes
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.list),
-                      label: const Text('Changer de ville'),
-                      onPressed: () {
-                        // Étape 7 : Implémenter la navigation vers la liste des villes
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => EcranListeVilles(),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 1. Nom de la ville toujours visible en haut
+              Text(
+                ville.nom,
+                style: TextStyle(
+                  fontSize: 32, 
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[800],
                 ),
               ),
-            ),
+              const SizedBox(height: 16),
+
+              // 2. Bloc Consumer pour gérer les états du chargement réseau et afficher les données
+              Consumer<VilleViewModel>(
+                builder: (context, vm, _) {
+                  if (vm.chargement) {
+                    return const CircularProgressIndicator();
+                  }
+                  
+                  if (vm.erreur != null) {
+                    return Column(
+                      children: [
+                        const Icon(Icons.wifi_off, size: 60, color: Colors.red),
+                        Text(vm.erreur!, style: const TextStyle(color: Colors.red)),
+                        const SizedBox(height: 8),
+                        ElevatedButton(
+                          onPressed: () => vm.selectionnerVille(vm.villeSelectionnee!),
+                          child: const Text('Réessayer'),
+                        ),
+                      ],
+                    );
+                  }
+
+                  if (meteo == null) {
+                    return const Text('En attente de chargement...');
+                  }
+
+                  // FUSION EFFECTUÉE : Si les données sont prêtes, on renvoie le bloc complet
+                  return Column(
+                    children: [
+                      Icon(
+                        _iconeMeteo(meteo.conditionTexte),
+                        size: 100,
+                        color: Colors.orange,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        '${meteo.temperature.toStringAsFixed(1)} °C',
+                        style: const TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '${meteo.conditionTexte} - ${meteo.humidite}% humidité',
+                        style: const TextStyle(fontSize: 18, color: Colors.grey),
+                      ),
+                      const SizedBox(height: 8),
+                      // Affichage de la date et de l'heure (Exercice A)
+                      Text(
+                        meteo.dateHeureFormatee,
+                        style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.grey[600]),
+                      ),
+
+                      // --- EXERCICE B : SECTION AFFICHAGE DES PRÉVISIONS SUR 3 JOURS ---
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Prévisions sur 3 jours',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 12),
+                      
+                      SizedBox(
+                        height: 120,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal, // Défilement horizontal
+                          shrinkWrap: true,
+                          itemCount: meteo.previsions.length,
+                          itemBuilder: (context, idx) {
+                            final prev = meteo.previsions[idx];
+                            return Card(
+                              elevation: 2,
+                              margin: const EdgeInsets.symmetric(horizontal: 6),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      prev.dateFormatee, 
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      prev.conditionTexte, 
+                                      style: const TextStyle(fontSize: 12, color: Colors.blue),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text('Max: ${prev.tempMax.toStringAsFixed(1)}°C', style: const TextStyle(fontSize: 11)),
+                                    Text('Min: ${prev.tempMin.toStringAsFixed(1)}°C', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      // -----------------------------------------------------------------
+                    ],
+                  );
+                },
+              ),
+              
+              const SizedBox(height: 32),
+              
+              // 3. Bouton pour ouvrir le sélecteur de villes
+              ElevatedButton.icon(
+                icon: const Icon(Icons.list),
+                label: const Text('Changer de ville'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const EcranListeVilles(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

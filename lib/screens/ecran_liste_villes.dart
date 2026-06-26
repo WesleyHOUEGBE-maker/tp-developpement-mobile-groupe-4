@@ -4,7 +4,6 @@ import '../viewmodels/ville_viewmodel.dart';
 import '../models/ville.dart';
 import 'ecran_ajout_ville.dart';
 
-
 class EcranListeVilles extends StatelessWidget {
   const EcranListeVilles({super.key});
 
@@ -19,7 +18,6 @@ class EcranListeVilles extends StatelessWidget {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         
-        
         // --- EXERCICE C : BOUTON PLUS POUR LE FORMULAIRE ---
         actions: [
           IconButton(
@@ -28,13 +26,12 @@ class EcranListeVilles extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => EcranAjoutVille(),
+                  builder: (_) => const EcranAjoutVille(),
                 ),
               );
             },
           ),
         ],
-        
       ),
       body: ListView.builder(
         itemCount: vm.villes.length, // Nombre total de villes dans la liste
@@ -57,15 +54,15 @@ class EcranListeVilles extends StatelessWidget {
                 fontWeight: estSelectionnee ? FontWeight.bold : FontWeight.normal,
               ),
             ),
-            // Sous-titre : Pays et température de la ville
-            subtitle: Text('${ville.pays} - ${ville.temperature}°C'),
+            // Sous-titre : Affichage du pays (on retire l'ancienne température en dur pour éviter les faux rapports)
+            subtitle: Text(ville.pays),
             
             // Icône à droite : Un cercle de validation bleu uniquement sur la ville active
             trailing: estSelectionnee
                 ? const Icon(Icons.check_circle, color: Colors.blue)
                 : null,
                 
-            // Action au clic sur une ligne (Code visible sur l'image 1000109804.jpg)
+            // Action au clic sur une ligne
             onTap: () {
               // Utiliser context.read() pour appeler l'action du ViewModel sans reconstruire le widget
               context.read<VilleViewModel>().selectionnerVille(ville);
