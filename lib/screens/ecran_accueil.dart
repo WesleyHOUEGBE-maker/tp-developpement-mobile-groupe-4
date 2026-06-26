@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import '../viewmodels/ville_viewmodel.dart';
 import 'ecran_liste_villes.dart';
 
+import 'package:image_picker/image_picker.dart ';
+import 'dart:io';
+
 class EcranAccueil extends StatelessWidget {
   const EcranAccueil({super.key});
 
@@ -198,6 +201,44 @@ class EcranAccueil extends StatelessWidget {
             ),
           );
         },
+        
+        
+        GestureDetector(
+onTap: () async {
+mainAxisAlignment: MainAxisAlignment.center ,
+children: [
+// Ouvrir la galerie
+final picker = ImagePicker ();
+final XFile? image = await picker.pickImage(source:
+ImageSource.gallery);
+if (image != null) {
+// Mettre a jour le ViewModel avec le chemin de la photo
+context.read <VilleViewModel >().mettreAJourPhoto(image.path
+);
+}
+},
+child: ClipRRect(
+borderRadius: BorderRadius.circular (12) ,
+child: vm.villeSelectionnee ?. photoPath != null
+? Image.file(
+File(vm.villeSelectionnee !. photoPath !),
+width: double.infinity ,
+height: 200,
+fit: BoxFit.cover ,
+)
+: Container(
+width: double.infinity ,
+height: 200,
+color: Colors.grey [200] ,
+child: Column(Icon(Icons.add_a_photo , size: 50, color: Colors.
+grey),
+Text('Appuyez pour ajouter une photo '),
+),
+),
+],
+),
+),
+ 
       ),
     );
   }
