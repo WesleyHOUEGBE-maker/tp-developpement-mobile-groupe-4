@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import '../viewmodels/ville_viewmodel.dart';
 import '../models/ville.dart';
 import 'ecran_ajout_ville.dart';
+// Assure-toi que ces imports correspondent bien aux noms exacts de tes fichiers de service
+// import '../services/localisation_service.dart'; 
+// import '../services/meteo_service.dart';
 
 class EcranListeVilles extends StatelessWidget {
   const EcranListeVilles({super.key});
@@ -33,71 +36,94 @@ class EcranListeVilles extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: vm.villes.length, // Nombre total de villes dans la liste
-        itemBuilder: (context, index) {
-          final ville = vm.villes[index];
-          
-          // Vérifie si la ville de la ligne courante est celle actuellement sélectionnée
-          final estSelectionnee = ville.nom == vm.villeSelectionnee?.nom;
+      body: Column(
+        children: [
+          // 1. La liste prend tout l'espace disponible en haut
+          Expanded(
+            child: ListView.builder(
+              itemCount: vm.villes.length, // Nombre total de villes dans la liste
+              itemBuilder: (context, index) {
+                final ville = vm.villes[index];
+                
+                // Vérifie si la ville de la ligne courante est celle actuellement sélectionnée
+                final estSelectionnee = ville.nom == vm.villeSelectionnee?.nom;
 
-          return ListTile(
-            // Icône à gauche : Bleue si sélectionnée, grise sinon
-            leading: Icon(
-              Icons.location_city,
-              color: estSelectionnee ? Colors.blue : Colors.grey,
+                return ListTile(
+                  leading: Icon(
+                    Icons.location_city,
+                    color: estSelectionnee ? Colors.blue : Colors.grey,
+                  ),
+                  title: Text(
+                    ville.nom,
+                    style: TextStyle(
+                      fontWeight: estSelectionnee ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  subtitle: Text(ville.pays),
+                  trailing: estSelectionnee
+                      ? const Icon(Icons.check_circle, color: Colors.blue)
+                      : null,
+                  onTap: () {
+                    context.read<VilleViewModel>().selectionnerVille(ville);
+                    Navigator.pop(context);
+                  },
+                );
+              },
             ),
-            // Nom de la ville : En gras si sélectionnée
-            title: Text(
-              ville.nom,
-              style: TextStyle(
-                fontWeight: estSelectionnee ? FontWeight.bold : FontWeight.normal,
+          ),
+
+          // 2. Le bouton GPS est placé proprement en bas de l'écran
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SizedBox(
+              width: double.infinity, // Bouton sur toute la largeur
+              height: 50,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.my_location),
+                label: const Text('Trouver la ville la plus proche'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () async {
+                  // Décommente et ajuste ces lignes quand tes services GPS seront prêts :
+                  /*
+                  final service = LocalisationService();
+                  final position = await service.getPosition();
+
+                  if (position != null) {
+                    final viewModel = context.read<VilleViewModel>();
+                    final villeProche = service.trouverVilleProche(
+                      position, viewModel.villes, MeteoService.coords);
+
+                    if (villeProche != null) {
+                      viewModel.selectionnerVille(villeProche);
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Ville proche : ${villeProche.nom}')),
+                        );
+                        Navigator.pop(context);
+                      }
+                    } else {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Aucune ville proche trouvée')),
+                        );
+                      }
+                    }
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('GPS indisponible')),
+                      );
+                    }
+                  }
+                  */
+                },
               ),
             ),
-            // Sous-titre : Affichage du pays (on retire l'ancienne température en dur pour éviter les faux rapports)
-            subtitle: Text(ville.pays),
-            
-            // Icône à droite : Un cercle de validation bleu uniquement sur la ville active
-            trailing: estSelectionnee
-                ? const Icon(Icons.check_circle, color: Colors.blue)
-                : null,
-                
-            // Action au clic sur une ligne
-            onTap: () {
-              // Utiliser context.read() pour appeler l'action du ViewModel sans reconstruire le widget
-              context.read<VilleViewModel>().selectionnerVille(ville);
-              
-              // Revenir à l'écran précédent (l'écran d'accueil)
-              Navigator.pop(context);
-            },
-          );
-        },
-        
-        ElevatedButton.icon(
-  icon: Icon(Icons.my_location),
-  label: Text('Trouver la ville la plus proche'),
-  onPressed: () async {
-    final service = LocalisationService();
-    final position = await service.getPosition();
-
-    if (position != null) {
-      final vm = context.read<VilleViewModel>();
-      final villeProche = service.trouverVilleProche(
-        position, vm.villes, MeteoService.coords);
-
-      if (villeProche != null) {
-        vm.selectionnerVille(villeProche);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ville proche : ${villeProche.nom}')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('GPS indisponible')),
-        );
-      }
-    }
-  },
-),
+          ),
+        ],
       ),
     );
   }

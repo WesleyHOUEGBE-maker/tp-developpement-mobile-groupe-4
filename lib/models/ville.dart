@@ -18,15 +18,15 @@ class Ville {
     this.photoPath,
   });
   
-  
-  // Copier la ville avec une nouvelle photo
-       VillecopierAvecPhoto(String chemin) {
-           return Ville(
-            nom: nom , pays: pays , temperature: temperature ,
-              condition: condition , humidite: humidite ,
-           photoPath: chemin ,
-          );
-
-} 
-
+  // Copier la ville avec une nouvelle photo (Correction de l'espace ici)
+  Ville copierAvecPhoto(String chemin) {
+    return Ville(
+      nom: nom, 
+      pays: pays, 
+      temperature: temperature,
+      condition: condition, 
+      humidite: humidite,
+      photoPath: chemin,
+    );
+  } 
 }

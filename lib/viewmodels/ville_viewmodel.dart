@@ -18,7 +18,7 @@ class VilleViewModel extends ChangeNotifier {
   List<Ville> get villes           => _villes;
   Ville?      get villeSelectionnee => _villeSelectionnee;
   MeteoData?  get meteoActuelle     => _meteoActuelle;
-  bool        get chargement        => _chargement;
+  bool        get chargement        => _chargement; // ✅ CORRIGÉ ICI : '=>' au lieu de '='
   String?     get erreur            => _erreur;
 
   VilleViewModel() {
@@ -27,7 +27,6 @@ class VilleViewModel extends ChangeNotifier {
 
   void _initialiser() {
     _villes = [
-      // ✅ CORRECTION 5 : Lagos en double supprimé, on garde une seule entrée par nom
       Ville(nom: 'Cotonou',         pays: 'Bénin',          temperature: 29,   condition: 'Ensoleillé',  humidite: 75),
       Ville(nom: 'Parakou',         pays: 'Bénin',          temperature: 32,   condition: 'Ensoleillé',  humidite: 60),
       Ville(nom: 'Lagos',           pays: 'Nigéria',        temperature: 31,   condition: 'Nuageux',     humidite: 80),
@@ -57,7 +56,6 @@ class VilleViewModel extends ChangeNotifier {
     _villeSelectionnee = _villes.first;
     notifyListeners();
 
-    // ✅ CORRECTION 6 : chargement de la ville par défaut au démarrage
     selectionnerVille(_villeSelectionnee!);
   }
 
@@ -85,10 +83,10 @@ class VilleViewModel extends ChangeNotifier {
 
     final meteo = await _meteoService.getMeteo(ville.nom);
     
-
     if (meteo != null) {
       _meteoActuelle        = meteo;
       _cacheMeteo[ville.nom] = (meteo, DateTime.now());
+      await _verifierAlerteChaleur();
     } else {
       _erreur = 'Impossible de charger la météo';
     }
@@ -98,42 +96,38 @@ class VilleViewModel extends ChangeNotifier {
   }
   
   Future<void> _verifierAlerteChaleur() async {
-  if (_meteoActuelle == null) return;
-  if (_meteoActuelle!.temperature > 33) {
-    final plugin = FlutterLocalNotificationsPlugin();
+    if (_meteoActuelle == null) return;
+    if (_meteoActuelle!.temperature > 33) {
+      final plugin = FlutterLocalNotificationsPlugin();
 
-    const AndroidNotificationDetails details =
-        AndroidNotificationDetails(
-      'canal_alerte', 'Alertes Meteo',
-      importance: Importance.high, priority: Priority.high,
-    );
+      const AndroidNotificationDetails details = AndroidNotificationDetails(
+        'canal_alerte', 'Alertes Meteo',
+        importance: Importance.high, priority: Priority.high,
+      );
 
-    await plugin.show(
-      1,
-      'Alerte chaleur !',
-      'Il fait ${_meteoActuelle!.temperature.toStringAsFixed(0)}°C a ${_villeSelectionnee!.nom}',
-      NotificationDetails(android: details),
-    );
+      await plugin.show(
+        1,
+        'Alerte chaleur !',
+        'Il fait ${_meteoActuelle!.temperature.toStringAsFixed(0)}°C a ${_villeSelectionnee!.nom}',
+        const NotificationDetails(android: details),
+      );
+    }
   }
-}
 
   void ajouterVille(Ville ville) {
     _villes.add(ville);
     notifyListeners();
   }
   
-  
-  void mettreAJourPhoto(StringcheminPhoto) {
-if (_villeSelectionnee == null) return;
-// Trouver l'index de la ville dans la liste
-final index = _villes.indexWhere ((v) => v.nom ==
-_villeSelectionnee !.nom);
+  void mettreAJourPhoto(String cheminPhoto) {
+    if (_villeSelectionnee == null) return;
 
-if (index ==-1) return;
-// Creer une copie avec la nouvelle photo
-_villes[index] = _villes[index ]. copierAvecPhoto(cheminPhoto);
-_villeSelectionnee = _villes[index ];
-notifyListeners (); // prevenir les widgets
+    final index = _villes.indexWhere((v) => v.nom == _villeSelectionnee!.nom);
+    if (index == -1) return;
 
+    _villes[index] = _villes[index].copierAvecPhoto(cheminPhoto);
+    _villeSelectionnee = _villes[index];
+    
+    notifyListeners();
   }
 }
