@@ -18,7 +18,7 @@ class MeteoService {
     'Lomé': [6.1375, 1.2123],
     'Kara': [9.5511, 1.1861],
     
-    // Nigéria (Variante accentuée si tapée ainsi)
+    // Nigéria
     'Nigéria': [9.0820, 8.6753], 
     'Abuja': [9.0579, 7.4951],
     
@@ -57,8 +57,8 @@ class MeteoService {
   // Instance de dio configuree
   final Dio _dio = Dio(BaseOptions(
     baseUrl: 'https://api.open-meteo.com/v1',
-    connectTimeout: Duration(seconds: 10),
-    receiveTimeout: Duration(seconds: 10),
+    connectTimeout: const Duration(seconds: 10),
+    receiveTimeout: const Duration(seconds: 10),
   ));
 
   MeteoService() {
@@ -78,27 +78,24 @@ class MeteoService {
       return null;
     }
 
-        try {
-      final response = await _dio.get('/forecast',
-        queryParameters: {
-          'latitude': coords[0],
-          'longitude': coords[1],
-          'current_weather': true, // <-- REQUIS pour activer les données actuelles
-          'current': 'temperature_2m,relative_humidity_2m,weather_code',
-          
-          // --- EXERCICE B : Demande des prévisions journalières spécifiques ---
-          'daily': 'temperature_2m_max,temperature_2m_min,weather_code', // Note: Open-Meteo utilise weather_code au lieu de weathercode
-          
-          'timezone': 'Africa/Lagos',
-        });
+    try {
+      final lat = coords[0];
+      final lon = coords[1];
+      
+      // Construction de l'URL brute à la main pour éviter l'encodage des virgules par Dio (%2C)
+      final urlBrute = '/forecast?latitude=$lat&longitude=$lon&current=temperature_2m,relative_humidity_2m,weather_code,time&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Africa/Lagos';
 
-      // CORRECTION EXERCICE B : On passe tout l'objet JSON car fromJson doit lire 'current' ET 'daily'
+      final response = await _dio.get(urlBrute);
+
+      // On passe le JSON complet à la factory
       return MeteoData.fromJson(response.data as Map<String, dynamic>);
 
-    }  on DioException catch (e) {
+    } on DioException catch (e) {
       print('Erreur reseau : ${e.message}');
+      if (e.response != null) {
+        print('Détails du serveur Open-Meteo : ${e.response?.data}');
+      }
       return null;
     }
-
   }
 }
