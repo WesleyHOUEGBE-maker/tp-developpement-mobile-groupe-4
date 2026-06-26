@@ -80,16 +80,41 @@ class EcranAccueil extends StatelessWidget {
                     const SizedBox(height: 16),
                     
                     // Section 2 : Affichage de la température sans décimales
-                    Text(
-                      '${ville.temperature.toStringAsFixed(0)}°C',
-                      style: const TextStyle(
-                        fontSize: 60, 
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    
-                    // Section 3 : Affichage du nom de la ville
-                    Text(
+
+           Consumer<VilleViewModel>(
+                builder: (context, vm, _) {
+                if (vm.chargement) {
+                 return CircularProgressIndicator();
+          }
+           if (vm.erreur != null) {
+      return Column(children: [
+        Icon(Icons.wifi_off, size: 60, color: Colors.red),
+        Text(vm.erreur!, style: TextStyle(color: Colors.red)),
+        ElevatedButton(
+          onPressed: () => vm.selectionnerVille(vm.
+              villeSelectionnee!),
+          child: Text('Réessayer'),
+        ),
+      ]);
+    }
+    final meteo = vm.meteoActuelle;
+    if (meteo == null) return Text('Chargement...');
+
+    return Column(children: [
+      Text(
+        '${meteo.temperature.toStringAsFixed(1)} °C',
+        style: TextStyle(fontSize: 60, fontWeight: FontWeight.
+            bold),
+      ),
+      Text('${meteo.conditionTexte} - ${meteo.humidite}% '
+          'humidité'),
+    ]);
+  },
+),
+
+                     
+      // Section 3 : Affichage du nom de la ville
+             Text(
                       ville.nom,
                       style: TextStyle(
                         fontSize: 28, 

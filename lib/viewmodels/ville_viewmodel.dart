@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../models/ville.dart';
+import '../services/meteo_service.dart';
+import '../models/meteo_data.dart';
 
 // Le ViewModel hérite de ChangeNotifier pour pouvoir notifier l'interface des changements
 class VilleViewModel extends ChangeNotifier {
@@ -10,9 +12,18 @@ class VilleViewModel extends ChangeNotifier {
   // Variable privée pour stocker la ville actuellement sélectionnée par l'utilisateur
   Ville? _villeSelectionnee;
 
+  final MeteoService _meteoService = MeteoService();
+  MeteoData? _meteoActuelle;
+  bool _chargement = false;
+  String? _erreur;
+
   // Getters permettant à la Vue (UI) de lire les données privées sans les modifier
   List<Ville> get villes => _villes;
   Ville? get villeSelectionnee => _villeSelectionnee;
+
+  MeteoData? get meteoActuelle => _meteoActuelle;
+  bool        get chargement    => _chargement;
+  String?     get erreur        => _erreur;
 
   // Constructeur du ViewModel : charge les données météo dès le démarrage
   VilleViewModel() {
@@ -64,11 +75,21 @@ Ville(nom: 'Casablanca', pays: 'Maroc', temperature: 23.0, condition: 'Ventueux'
     notifyListeners(); 
   }
 
-  // Méthode publique pour changer la ville affichée à l'écran
-  void selectionnerVille(Ville ville) {
+  // Charger la vraie meteo quand on selectionne une ville
+  Future<void> selectionnerVille(Ville ville) async {
     _villeSelectionnee = ville;
-    
-    // Notification indispensable après chaque modification de données
+    _chargement = true;
+    _erreur = null;
+    notifyListeners();
+
+    final meteo = await _meteoService.getMeteo(ville.nom);
+
+    if (meteo != null) {
+      _meteoActuelle = meteo;
+    } else {
+      _erreur = 'Impossible de charger la meteo';
+    }
+    _chargement = false;
     notifyListeners();
   }
   
