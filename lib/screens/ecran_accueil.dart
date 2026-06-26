@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/ville_viewmodel.dart';
 import '../services/meteo_service.dart';
-import 'ecran_liste_villes.dart';
+import '../screens/ecran_liste_villes.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb; 

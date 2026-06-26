@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/ville_viewmodel.dart';
 import '../models/ville.dart';
-import 'ecran_ajout_ville.dart';
+import '../screens/ecran_ajout_ville.dart';
+import '../services/localisation_service.dart';
+import '../services/meteo_service.dart';
+
 // Assure-toi que ces imports correspondent bien aux noms exacts de tes fichiers de service
 // import '../services/localisation_service.dart'; 
 // import '../services/meteo_service.dart';
@@ -86,8 +89,7 @@ class EcranListeVilles extends StatelessWidget {
                   foregroundColor: Colors.white,
                 ),
                 onPressed: () async {
-                  // Décommente et ajuste ces lignes quand tes services GPS seront prêts :
-                  /*
+
                   final service = LocalisationService();
                   final position = await service.getPosition();
 
@@ -118,7 +120,7 @@ class EcranListeVilles extends StatelessWidget {
                       );
                     }
                   }
-                  */
+                  
                 },
               ),
             ),

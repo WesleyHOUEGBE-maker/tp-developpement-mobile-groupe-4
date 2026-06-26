@@ -55,6 +55,8 @@ class MeteoService {
     connectTimeout: const Duration(seconds: 10),
     receiveTimeout: const Duration(seconds: 10),
   ));
+  
+  static Map<String, List<double>> get coords => _coords;
 
   MeteoService() {
     _dio.interceptors.add(LogInterceptor(
