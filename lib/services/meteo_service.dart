@@ -78,7 +78,7 @@ class MeteoService {
       // ✅ CORRECTION 3 : slash encodé en %2F pour éviter les erreurs d'URL
       final urlBrute =
           '/forecast?latitude=$lat&longitude=$lon'
-          '&current=temperature_2m,relative_humidity_2m,weather_code,time'
+          '&current=temperature_2m,relative_humidity_2m,weather_code'
           '&daily=temperature_2m_max,temperature_2m_min,weather_code'
           '&timezone=Africa%2FLagos';
 
