@@ -72,6 +72,32 @@ class EcranListeVilles extends StatelessWidget {
             },
           );
         },
+        
+        ElevatedButton.icon(
+  icon: Icon(Icons.my_location),
+  label: Text('Trouver la ville la plus proche'),
+  onPressed: () async {
+    final service = LocalisationService();
+    final position = await service.getPosition();
+
+    if (position != null) {
+      final vm = context.read<VilleViewModel>();
+      final villeProche = service.trouverVilleProche(
+        position, vm.villes, MeteoService.coords);
+
+      if (villeProche != null) {
+        vm.selectionnerVille(villeProche);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ville proche : ${villeProche.nom}')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('GPS indisponible')),
+        );
+      }
+    }
+  },
+),
       ),
     );
   }
