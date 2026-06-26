@@ -30,7 +30,22 @@ class EcranAccueil extends StatelessWidget {
     }
   }
 
-  // Teinte de superposition dynamique pour adapter l'ambiance lumineuse sur l'image
+  Color _couleurFondMeteo(String condition) {
+    switch (condition) {
+      case 'Ensoleille':
+      case 'Ensoleillé':
+        return Colors.orange.shade100;
+      case 'Nuageux':
+        return Colors.grey.shade300;
+      case 'Pluvieux':
+      case 'Averses':
+      case 'Orageux':
+        return Colors.blue.shade100;
+      default:
+        return Colors.white;
+    }
+  }
+
   Color _teinteFiltreMeteo(String condition) {
     switch (condition) {
       case 'Ensoleille':
@@ -47,7 +62,6 @@ class EcranAccueil extends StatelessWidget {
     }
   }
 
-  // --- EXERCICE A : MODAL BOTTOM SHEET POUR LE CHOIX DE LA PHOTO ---
   void _afficherChoixPhoto(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -103,6 +117,66 @@ class EcranAccueil extends StatelessWidget {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                image: DecorationImage(
+                  image: AssetImage('img/nuages.jpeg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    'AppMeteo',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Menu de Navigation',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14,
+                      shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home, color: Colors.blue),
+              title: const Text('Accueil'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.location_city, color: Colors.blue),
+              title: const Text('Changer de ville'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const EcranListeVilles(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
       body: Consumer<VilleViewModel>(
         builder: (context, vm, _) {
           final meteo = vm.meteoActuelle;
@@ -110,7 +184,6 @@ class EcranAccueil extends StatelessWidget {
           return Container(
             width: double.infinity,
             height: double.infinity,
-            // --- AJOUT DE TON IMAGE DE FOND LOCALE ---
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: const AssetImage('img/nuages.jpeg'),
@@ -138,7 +211,7 @@ class EcranAccueil extends StatelessWidget {
                         ),
                       ),
                       
-                      // --- EXERCICE B : AFFICHAGE DES COORDONNÉES RÉELLES DU MODÈLE VILLE ---
+                      // --- EXERCICE B : AFFICHAGE DES COORDONNÉES RÉELLES ---
                       const SizedBox(height: 4),
                       Text(
                         'Lat: ${ville.temperature.toStringAsFixed(2)} | Lon: ${ville.humidite.toStringAsFixed(2)}',
@@ -208,9 +281,9 @@ class EcranAccueil extends StatelessWidget {
                       ] else if (meteo == null) ...[
                         const Text('En attente de chargement...', style: TextStyle(fontWeight: FontWeight.bold)),
                       ] else ...[
-                        // Conteneur transparent blanc pour faire ressortir les informations textuelles
+                        // --- CARTE AVEC COULEUR DYNAMIQUE SELON LA MÉTÉO ---
                         Card(
-                          color: Colors.white.withOpacity(0.8),
+                          color: _couleurFondMeteo(meteo.conditionTexte).withOpacity(0.85), 
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
@@ -287,15 +360,11 @@ class EcranAccueil extends StatelessWidget {
                       ],
                       
                       const SizedBox(height: 24),
-                      
-                      // 3. Bouton pour ouvrir le sélecteur de villes
+
+                      // --- RETOUR DU BOUTON INITIAL TOUT EN BAS ---
                       ElevatedButton.icon(
                         icon: const Icon(Icons.list),
                         label: const Text('Changer de ville'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue.shade700,
-                          foregroundColor: Colors.white,
-                        ),
                         onPressed: () {
                           Navigator.push(
                             context,
