@@ -3,6 +3,7 @@ import '../models/ville.dart';
 import '../services/meteo_service.dart';
 import '../models/meteo_data.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class VilleViewModel extends ChangeNotifier {
   List<Ville> _villes = [];
@@ -18,7 +19,7 @@ class VilleViewModel extends ChangeNotifier {
   List<Ville> get villes           => _villes;
   Ville?      get villeSelectionnee => _villeSelectionnee;
   MeteoData?  get meteoActuelle     => _meteoActuelle;
-  bool        get chargement        => _chargement; // ✅ CORRIGÉ ICI : '=>' au lieu de '='
+  bool        get chargement        => _chargement; 
   String?     get erreur            => _erreur;
 
   VilleViewModel() {
@@ -112,6 +113,36 @@ class VilleViewModel extends ChangeNotifier {
         const NotificationDetails(android: details),
       );
     }
+  }
+
+  // --- EXERCICE C : NOTIFICATION PLANIFIÉE À 7H00 ---
+  Future<void> planifierNotificationQuotidienne() async {
+    final plugin = FlutterLocalNotificationsPlugin();
+
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'canal_quotidien', 'Rappels Météo',
+      importance: Importance.high, priority: Priority.high,
+    );
+
+    final maintenant = tz.TZDateTime.now(tz.local);
+    var heurePlanifiee = tz.TZDateTime(
+      tz.local, maintenant.year, maintenant.month, maintenant.day, 7, 0, 0
+    );
+
+    if (heurePlanifiee.isBefore(maintenant)) {
+      heurePlanifiee = heurePlanifiee.add(const Duration(days: 1));
+    }
+
+    await plugin.zonedSchedule(
+      2,
+      'Bonjour ! ☀️',
+      'N\'oublie pas de vérifier la météo de ta ville aujourd\'hui !',
+      heurePlanifiee,
+      const NotificationDetails(android: androidDetails),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
   }
 
   void ajouterVille(Ville ville) {
